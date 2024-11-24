@@ -30,15 +30,14 @@ public class LoanCalc {
 	private static double endBalance(double loan, double rate, int n, double payment) {	
 		// Replace the following statement with your code
 
-		rate = rate / 100 ;
-		double balance = loan;
+		rate = (rate / 100) ;
+		double balance = (loan - payment) * (1 + rate);
 
 		for (int i = 0; i < n ; i++) {
-			balance += balance * rate;
-			balance -= payment;
+			balance = (balance - payment) * (1 + rate);
 	
 		}
-		return Math.max(0, balance);
+		return balance;
 	}
 	
 	// Uses sequential search to compute an approximation of the periodical payment
@@ -49,21 +48,17 @@ public class LoanCalc {
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
 		// Replace the following statement with your code
 
-		rate = rate / 100 ;
 		double g = loan / n;
 		iterationCounter = 0;
+		double increment = 0.001;
 		
-		while (true) {
-			double balance = endBalance(loan, rate, n, g);
-		
-			if (Math.abs(balance) <= epsilon) {
-				break;
-			}
-			g += epsilon;
+		while (endBalance(loan, rate, n, g) >= epsilon) {
+			g += increment;
 			iterationCounter++;
 		}
 		return g;
     }
+    
     
     // Uses bisection search to compute an approximation of the periodical payment 
 	// that will bring the ending balance of a loan close to 0.
@@ -73,23 +68,22 @@ public class LoanCalc {
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
         // Replace the following statement with your code
 		
-		rate = rate / 100 ;
-		double L = 0;
-		double H = (loan * rate) / (1- Math.pow( 1 + rate , -n));
-		double g = 0; 
+	
+		double L = (loan / n);
+		double H = loan;
+		double g = (L + H) / 2.0;
 		iterationCounter = 0;
 
-		while (H - L > epsilon) {
-			g = (L + H) / 2;
-			double balance = endBalance(loan, rate, n, g);
-
-			if (balance > 0) {
+		while (Math.abs(endBalance(loan, rate, n, g)) >= epsilon) {
+			if (endBalance(loan, rate, n, g) > 0) {
 				L = g;
+
 			} else {
 				H = g;
 			}
+				g = (L + H) / 2.0;
 			iterationCounter++;
-			}
+		}
 		return g;
     }
 }
