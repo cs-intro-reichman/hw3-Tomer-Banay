@@ -69,21 +69,25 @@ public class LoanCalc {
         // Replace the following statement with your code
 		
 	
-		double L = (loan / n);
+		double L = 0;
 		double H = loan;
 		double g = (L + H) / 2.0;
-		iterationCounter = 0;
+		double fg = endBalance(loan, rate, n, g); // endbalance withe payment g
+		double fl = endBalance(loan, rate, n, L); // endbalance withe payment L
+		iterationCounter = 0; //reset
 
-		while (Math.abs(endBalance(loan, rate, n, g)) >= epsilon) {
-			if (endBalance(loan, rate, n, g) > 0) {
+		while ((H -L) >= epsilon) {
+			iterationCounter++;
+			if (fg * fl > 0) {
 				L = g;
+				fl = fg;
 
 			} else {
 				H = g;
 			}
 				g = (L + H) / 2.0;
-			iterationCounter++;
+				fg = endBalance(loan, rate, n, g);
 		}
 		return g;
     }
-}
+}                                                                                                                                                                                                                                                                           
