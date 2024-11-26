@@ -1,5 +1,5 @@
 // Computes the periodical payment necessary to pay a given loan.
-public class LoanCalc {
+public class Test1 {
 	
 	static double epsilon = 0.001;  // Approximation accuracy
 	static int iterationCounter;    // Number of iterations 
@@ -67,27 +67,26 @@ public class LoanCalc {
 	// Side effect: modifies the class variable iterationCounter.
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
         // Replace the following statement with your code
-		
-	
-		double L = 0;
-		double H = loan;
-		double g = (L + H) / 2.0;
-		double fg = endBalance(loan, rate, n, g); // endbalance withe payment g
-		double fl = endBalance(loan, rate, n, L); // endbalance withe payment L
-		iterationCounter = 0; //reset
-
-		while ((H -L) >= epsilon) {
-			iterationCounter++;
-			if (fg * fl > 0) {
-				L = g;
-				fl = fg;
-
-			} else {
-				H = g;
-			}
-				g = (L + H) / 2.0;
-				fg = endBalance(loan, rate, n, g);
-		}
-		return g;
+        rate = rate / 100.0; // Convert rate from percentage to fraction
+        double L = 0.0; // Lower bound
+        double H = loan; // Upper bound
+        double g = 0.0; // Midpoint
+        iterationCounter = 0;
+    
+        double balance = endBalance(loan, rate, n, g);
+        
+        while (Math.abs(balance) > epsilon && (H - L) > epsilon) {
+            g = (L + H) / 2.0; // Calculate midpoint
+            balance = endBalance(loan, rate, n, g); // Recalculate balance
+    
+            if (balance > 0) { // Payment too low
+                L = g;
+            } else { // Payment too high
+                H = g;
+            }
+            iterationCounter++;
+        }
+    
+        return g;
     }
-}                                                                                                                                                                                                                                                                           
+}
